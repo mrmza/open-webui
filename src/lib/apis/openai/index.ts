@@ -280,7 +280,8 @@ export const generateOpenAIChatCompletion = async (
 ): Promise<[Response | null, AbortController]> => {
 	const controller = new AbortController();
 	let error = null;
-
+	console.log('!!!!bodyJSON', JSON.stringify(body));
+	console.log('!!!!url', url);
 	const res = await fetch(`${url}/chat/completions`, {
 		signal: controller.signal,
 		method: 'POST',

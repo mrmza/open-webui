@@ -4,8 +4,9 @@
 	const dispatch = createEventDispatcher();
 
 	import Markdown from './Markdown.svelte';
+	import ToolCalls from './ToolCalls.svelte';
 	import LightBlub from '$lib/components/icons/LightBlub.svelte';
-	import { chatId, mobile, showArtifacts, showControls, showOverview } from '$lib/stores';
+	import { chatId, mobile, showArtifacts, showControls, showOverview, showGad } from '$lib/stores';
 	import ChatBubble from '$lib/components/icons/ChatBubble.svelte';
 	import { stringify } from 'postcss';
 
@@ -13,6 +14,7 @@
 	export let content;
 	export let model = null;
 	export let sources = null;
+	export let toolCalls = null;
 
 	export let save = false;
 	export let floatingButtons = true;
@@ -132,6 +134,7 @@
 		{content}
 		{model}
 		{save}
+		{toolCalls}
 		sourceIds={(sources ?? []).reduce((acc, s) => {
 			let ids = [];
 			s.document.forEach((document, index) => {
@@ -163,7 +166,9 @@
 		}}
 		on:code={(e) => {
 			const { lang, code } = e.detail;
-
+			console.log('lang', lang);
+			console.log('code', code);	
+			
 			if (
 				(['html', 'svg'].includes(lang) || (lang === 'xml' && code.includes('svg'))) &&
 				!$mobile &&
@@ -172,8 +177,15 @@
 				showArtifacts.set(true);
 				showControls.set(true);
 			}
+			
+			if (lang === 'gad') {
+				showGad.set(true);
+			}
 		}}
 	/>
+	<!-- {#if toolCalls}
+		<ToolCalls {toolCalls} />
+	{/if} -->
 </div>
 
 {#if floatingButtons}

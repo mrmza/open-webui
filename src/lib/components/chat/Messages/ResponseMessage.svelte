@@ -32,6 +32,7 @@
 	import Sparkles from '$lib/components/icons/Sparkles.svelte';
 	import Error from './Error.svelte';
 	import Citations from './Citations.svelte';
+	import ToolCalls from './ToolCalls.svelte';
 	import CodeExecutions from './CodeExecutions.svelte';
 
 	import type { Writable } from 'svelte/store';
@@ -65,6 +66,7 @@
 		done: boolean;
 		error?: boolean | { content: string };
 		sources?: string[];
+		toolCalls?: any[];
 		code_executions?: {
 			uuid: string;
 			name: string;
@@ -624,6 +626,7 @@
 										sources={message.sources}
 										floatingButtons={message?.done}
 										save={!readOnly}
+										toolCalls={message?.toolCalls}
 										{model}
 										onSourceClick={(e) => {
 											console.log(e);
@@ -665,6 +668,10 @@
 								{#if (message?.sources || message?.citations) && (model?.info?.meta?.capabilities?.citations ?? true)}
 									<Citations sources={message?.sources ?? message?.citations} />
 								{/if}
+
+								<!-- {#if message?.toolCalls}
+									<ToolCalls toolCalls={message?.toolCalls} />
+								{/if} -->
 
 								{#if message.code_executions}
 									<CodeExecutions codeExecutions={message.code_executions} />

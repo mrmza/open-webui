@@ -448,6 +448,10 @@ async def generate_function_chat_completion(form_data, user, models: dict = {}):
     pipe = function_module.pipe
     params = get_function_params(function_module, form_data, user, extra_params)
 
+
+    print('!!!!params', params);
+
+    
     if form_data.get("stream", False):
 
         async def stream_content():

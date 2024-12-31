@@ -18,7 +18,7 @@
 
 	export let sourceIds = [];
 	export let onSourceClick = () => {};
-
+	export let toolCalls = [];
 	let tokens = [];
 
 	const options = {
@@ -42,6 +42,7 @@
 		{tokens}
 		{id}
 		{save}
+		{toolCalls}
 		{onSourceClick}
 		on:update={(e) => {
 			dispatch('update', e.detail);

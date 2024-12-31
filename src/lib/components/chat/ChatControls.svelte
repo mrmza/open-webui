@@ -4,7 +4,7 @@
 	import { Pane, PaneResizer } from 'paneforge';
 
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { mobile, showControls, showCallOverlay, showOverview, showArtifacts } from '$lib/stores';
+	import { mobile, showControls, showCallOverlay, showOverview, showArtifacts, showGad } from '$lib/stores';
 
 	import Modal from '../common/Modal.svelte';
 	import Controls from './Controls/Controls.svelte';
@@ -13,6 +13,7 @@
 	import Overview from './Overview.svelte';
 	import EllipsisVertical from '../icons/EllipsisVertical.svelte';
 	import Artifacts from './Artifacts.svelte';
+	import Gad from './Gad.svelte';
 	import { min } from '@floating-ui/utils';
 
 	export let history;
@@ -124,6 +125,7 @@
 		showControls.set(false);
 		showOverview.set(false);
 		showArtifacts.set(false);
+		showGad.set(false);
 
 		if ($showCallOverlay) {
 			showCallOverlay.set(false);
@@ -145,7 +147,7 @@
 				}}
 			>
 				<div
-					class=" {$showCallOverlay || $showOverview || $showArtifacts
+					class=" {$showCallOverlay || $showOverview || $showArtifacts || $showGad
 						? ' h-screen  w-screen'
 						: 'px-6 py-4'} h-full"
 				>
@@ -167,6 +169,8 @@
 						</div>
 					{:else if $showArtifacts}
 						<Artifacts {history} />
+					{:else if $showGad}
+						<Gad {history} />
 					{:else if $showOverview}
 						<Overview
 							{history}
@@ -228,7 +232,7 @@
 			{#if $showControls}
 				<div class="pr-4 pb-8 flex max-h-full min-h-full">
 					<div
-						class="w-full {($showOverview || $showArtifacts) && !$showCallOverlay
+						class="w-full {($showOverview || $showArtifacts || $showGad) && !$showCallOverlay
 							? ' '
 							: 'px-4 py-4 bg-white dark:shadow-lg dark:bg-gray-850  border border-gray-50 dark:border-gray-850'}  rounded-xl z-40 pointer-events-auto overflow-y-auto scrollbar-hidden"
 					>
@@ -248,6 +252,8 @@
 							</div>
 						{:else if $showArtifacts}
 							<Artifacts {history} overlay={dragged} />
+						{:else if $showGad}
+							<Gad {history} overlay={dragged} />
 						{:else if $showOverview}
 							<Overview
 								{history}

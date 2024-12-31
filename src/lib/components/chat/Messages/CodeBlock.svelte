@@ -280,7 +280,7 @@ __builtins__.input = input`);
 	$: dispatch('code', { lang, code });
 
 	onMount(async () => {
-		console.log('codeblock', lang, code);
+		// console.log('codeblock', lang, code);
 
 		if (lang) {
 			dispatch('code', { lang, code });
@@ -313,6 +313,8 @@ __builtins__.input = input`);
 			{:else}
 				<pre class="mermaid">{code}</pre>
 			{/if}
+		{:else if lang === 'gad'}
+			<div class="text-text-300 absolute pl-4 py-1.5 text-xs font-medium dark:text-white"></div>
 		{:else}
 			<div class="text-text-300 absolute pl-4 py-1.5 text-xs font-medium dark:text-white">
 				{lang}

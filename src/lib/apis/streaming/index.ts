@@ -10,6 +10,7 @@ type TextStreamUpdate = {
 	selectedModelId?: any;
 	error?: any;
 	usage?: ResponseUsage;
+	toolCalls?: any;
 };
 
 type ResponseUsage = {
@@ -60,7 +61,7 @@ async function* openAIStreamToIterator(
 
 		try {
 			const parsedData = JSON.parse(data);
-			console.log(parsedData);
+			console.log('parsedData', parsedData);
 
 			if (parsedData.error) {
 				yield { done: true, value: '', error: parsedData.error };
@@ -75,6 +76,18 @@ async function* openAIStreamToIterator(
 			if (parsedData.selected_model_id) {
 				yield { done: false, value: '', selectedModelId: parsedData.selected_model_id };
 				continue;
+			}
+			
+			if (parsedData.tool_calls) {
+				if (parsedData.tool_calls.length > 0) {
+					yield { done: false, value: '', toolCalls: parsedData.tool_calls };
+					continue;
+				}
+			}
+
+			if (parsedData.type === 'tool') {
+				console.log('!!!!ToolResult', parsedData);
+				yield { done: false, value: '', toolCalls: parsedData };
 			}
 
 			yield {
@@ -102,6 +115,12 @@ async function* streamLargeDeltasAsRandomChunks(
 			yield textStreamUpdate;
 			continue;
 		}
+
+		if (textStreamUpdate.toolCalls) {
+			yield textStreamUpdate;
+			continue;
+		}
+
 		let content = textStreamUpdate.value;
 		if (content.length < 5) {
 			yield { done: false, value: content };

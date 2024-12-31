@@ -23,6 +23,7 @@
 	export let id: string;
 	export let tokens: Token[];
 	export let top = true;
+	export let toolCalls = [];
 
 	export let save = false;
 	export let onSourceClick: Function = () => {};
@@ -63,7 +64,7 @@
 		<hr class=" border-gray-50 dark:border-gray-850" />
 	{:else if token.type === 'heading'}
 		<svelte:element this={headerComponent(token.depth)}>
-			<MarkdownInlineTokens id={`${id}-${tokenIdx}-h`} tokens={token.tokens} {onSourceClick} />
+			<MarkdownInlineTokens id={`${id}-${tokenIdx}-h`} tokens={token.tokens} {onSourceClick} {toolCalls} />
 		</svelte:element>
 	{:else if token.type === 'code'}
 		{#if token.raw.includes('```')}
@@ -109,6 +110,7 @@
 												id={`${id}-${tokenIdx}-header-${headerIdx}`}
 												tokens={header.tokens}
 												{onSourceClick}
+												{toolCalls}
 											/>
 										</div>
 									</div>
@@ -129,6 +131,7 @@
 												id={`${id}-${tokenIdx}-row-${rowIdx}-${cellIdx}`}
 												tokens={cell.tokens}
 												{onSourceClick}
+												{toolCalls}
 											/>
 										</div>
 									</td>
@@ -212,13 +215,14 @@
 				id={`${id}-${tokenIdx}-p`}
 				tokens={token.tokens ?? []}
 				{onSourceClick}
+				{toolCalls}
 			/>
 		</p>
 	{:else if token.type === 'text'}
 		{#if top}
 			<p>
 				{#if token.tokens}
-					<MarkdownInlineTokens id={`${id}-${tokenIdx}-t`} tokens={token.tokens} {onSourceClick} />
+					<MarkdownInlineTokens id={`${id}-${tokenIdx}-t`} tokens={token.tokens} {onSourceClick} {toolCalls} />
 				{:else}
 					{unescapeHtml(token.text)}
 				{/if}
@@ -228,6 +232,7 @@
 				id={`${id}-${tokenIdx}-p`}
 				tokens={token.tokens ?? []}
 				{onSourceClick}
+				{toolCalls}
 			/>
 		{:else}
 			{unescapeHtml(token.text)}

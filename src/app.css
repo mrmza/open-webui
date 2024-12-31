@@ -123,6 +123,51 @@ select {
 	visibility: hidden;
 }
 
+.spinner {
+	border: 5px solid rgba(0, 0, 0, 0.1);
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border-left-color: #09f;
+	animation: spin 1s ease infinite;
+	margin-right: 8px;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.tool-call-container {
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 5px;
+	margin-bottom: 10px;
+	background-color: #f9f9f9;
+}
+
+.tool-call-header {
+	display: flex;
+	align-items: center; /* Align items vertically centered */
+	font-size: 0.8em;
+	padding-left: 10px;
+	margin-bottom: 2px;
+}
+
+.tool-call-body {
+	font-size: 0.7em;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.tool-call-args, .tool-call-output {
+	margin-bottom: 0px;
+}
+
 .scrollbar-hidden::-webkit-scrollbar-corner {
 	display: none;
 }

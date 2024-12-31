@@ -492,11 +492,20 @@ async def generate_chat_completion(
     idx = 0
     payload = {**form_data}
 
-    if "metadata" in payload:
-        del payload["metadata"]
-
+   
     model_id = form_data.get("model")
     model_info = Models.get_model_by_id(model_id)
+
+     # to kiedy to kasować a kiedy nie kasować? hmm
+    # TODO robimy hardcode 
+    if "gpt-4o" in model_id:       
+        if "metadata" in payload:
+            del payload["metadata"]
+            
+    if "o1" in model_id:
+        if "metadata" in payload:
+            del payload["metadata"]
+
 
     # Check model info and override the payload
     if model_info:
@@ -585,6 +594,7 @@ async def generate_chat_completion(
 
     # Convert the modified body back to JSON
     payload = json.dumps(payload)
+    print('!!!!payload', payload);
 
     headers = {}
     headers["Authorization"] = f"Bearer {key}"

@@ -12,7 +12,7 @@ function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export const replaceTokens = (content, sourceIds, char, user) => {
+export const replaceTokens = (content, sourceIds, char, user, toolCalls) => {
 	const charToken = /{{char}}/gi;
 	const userToken = /{{user}}/gi;
 	const videoIdToken = /{{VIDEO_FILE_ID_([a-f0-9-]+)}}/gi; // Regex to capture the video ID

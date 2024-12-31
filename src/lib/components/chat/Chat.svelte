@@ -35,6 +35,7 @@
 		showOverview,
 		chatTitle,
 		showArtifacts,
+		showGad,
 		tools
 	} from '$lib/stores';
 	import {
@@ -209,6 +210,7 @@
 
 			const type = event?.data?.type ?? null;
 			const data = event?.data?.data ?? null;
+			console.log('eventType', type);
 
 			if (type === 'status') {
 				if (message?.statusHistory) {
@@ -367,6 +369,7 @@
 				showCallOverlay.set(false);
 				showOverview.set(false);
 				showArtifacts.set(false);
+				showGad.set(false);
 			}
 		});
 
@@ -506,6 +509,7 @@
 		await showCallOverlay.set(false);
 		await showOverview.set(false);
 		await showArtifacts.set(false);
+		await showGad.set(false);
 
 		if ($page.url.pathname.includes('/c/')) {
 			window.history.replaceState(history.state, '', `/`);
@@ -1631,7 +1635,8 @@
 					const textStream = await createOpenAITextStream(res.body, $settings.splitLargeChunks);
 
 					for await (const update of textStream) {
-						const { value, done, sources, selectedModelId, error, usage } = update;
+						const { value, done, sources, selectedModelId, error, usage, toolCalls } = update;
+						console.log('update', update);
 						if (error) {
 							await handleOpenAIError(error, null, model, responseMessage);
 							break;
@@ -1666,6 +1671,40 @@
 								);
 							}
 							continue;
+						}
+
+						if (toolCalls) {
+							console.log('!!!!!toolCalls!!!!!', toolCalls);
+							// powinnismy sprawdzic czy sa juz jesli tak to updatnąc status ichni
+							//responseMessage.toolCalls = toolCalls;
+							if (Array.isArray(toolCalls)) {
+								for (const toolCall of toolCalls) {
+									if (toolCall.type === 'tool_call') {
+										if (!responseMessage.toolCalls) {
+											responseMessage.toolCalls = [];
+										}
+										toolCall.isLoading = true;
+										responseMessage.toolCalls.push(toolCall);
+										responseMessage.content += `<toolcall_id data="${toolCall.id}" />`;
+									}
+								}
+							} else {
+								if (toolCalls.type === 'tool') {
+									for (const key in history.messages) {
+										const histmsg = history.messages[key];
+										console.log('histmsg', histmsg);
+										if (histmsg.toolCalls) {
+											for (const toolCallHistory of histmsg.toolCalls) {
+												if (toolCalls.tool_call_id === toolCallHistory.id) {
+													console.log('toolCallHistory', toolCallHistory);
+													toolCallHistory.output = toolCalls.content;
+													toolCallHistory.isLoading = false;
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 
 						if (responseMessage.content == '' && value == '\n') {

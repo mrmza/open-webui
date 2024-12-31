@@ -13,10 +13,13 @@
 	import Image from '$lib/components/common/Image.svelte';
 	import KatexRenderer from './KatexRenderer.svelte';
 	import Source from './Source.svelte';
+	import ToolCall from './ToolCall.svelte';
 
 	export let id: string;
 	export let tokens: Token[];
 	export let onSourceClick: Function = () => {};
+	export let toolCalls = [];
+
 </script>
 
 {#each tokens as token}
@@ -30,6 +33,8 @@
 			{@html `${token.text}`}
 		{:else if token.text.includes(`<source_id`)}
 			<Source {token} onClick={onSourceClick} />
+		{:else if token.text.includes(`<toolcall_id`)}
+			<ToolCall {token} {toolCalls} />
 		{:else}
 			{token.text}
 		{/if}
@@ -54,13 +59,15 @@
 	{:else if token.type === 'codespan'}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<code
-			class="codespan cursor-pointer"
-			on:click={() => {
-				copyToClipboard(unescapeHtml(token.text));
-				toast.success($i18n.t('Copied to clipboard'));
-			}}>{unescapeHtml(token.text)}</code
-		>
+		{#if !token.text.startsWith('gad')}
+			<code
+				class="codespan cursor-pointer"
+				on:click={() => {
+					copyToClipboard(unescapeHtml(token.text));
+					toast.success($i18n.t('Copied to clipboard'));
+				}}>{unescapeHtml(token.text)}</code
+			>
+		{/if}
 	{:else if token.type === 'br'}
 		<br />
 	{:else if token.type === 'del'}
